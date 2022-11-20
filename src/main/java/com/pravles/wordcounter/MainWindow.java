@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 import java.awt.GridLayout;
 
 import static com.pravles.wordcounter.Utils.calculateCenterOnScreen;
+import static java.lang.Integer.parseInt;
 
 public class MainWindow extends JFrame {
 
@@ -16,6 +17,7 @@ public class MainWindow extends JFrame {
     private final JLabel currentWordCount;
     private final JLabel wordsWrittenToday;
     private final JTextField dailyTarget;
+    private final JLabel progress;
 
     public MainWindow() {
         super("Word Counter 2022");
@@ -25,7 +27,7 @@ public class MainWindow extends JFrame {
 
         final JPanel detailsPane = new JPanel(false);
 
-        final GridLayout gridLayout = new GridLayout(4, 2);
+        final GridLayout gridLayout = new GridLayout(5, 2);
         detailsPane.setLayout(gridLayout);
         initialWordCount = new JLabel("?");
         detailsPane.add(new JLabel("Initial word count:"));
@@ -46,6 +48,12 @@ public class MainWindow extends JFrame {
         detailsPane.add(new JLabel("Daily target:"));
         detailsPane.add(dailyTarget);
 
+        progress = new JLabel("0%");
+
+        detailsPane.add(new JLabel("Progress:"));
+        detailsPane.add(progress);
+
+
         tabbedPane.add("Details", detailsPane);
 
         getContentPane().add(tabbedPane);
@@ -65,5 +73,15 @@ public class MainWindow extends JFrame {
 
     public void setDailyTarget(final long dailyTarget) {
         this.dailyTarget.setText(Long.toString(dailyTarget));
+    }
+
+    public void setCurrentWordCount(final int wordCount) {
+        this.currentWordCount.setText(Integer.toString(wordCount));
+        final int initialWordCount = parseInt(this.initialWordCount.getText());
+        final int wordsWritten = Math.min(0, wordCount - initialWordCount);
+        this.wordsWrittenToday.setText(Integer.toString(wordsWritten));
+        final int dailyTargetAmount = parseInt(this.dailyTarget.getText());
+        final int progress = wordsWritten*100 / dailyTargetAmount;
+        this.progress.setText(String.format("%d %%", progress));
     }
 }
