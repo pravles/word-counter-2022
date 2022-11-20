@@ -8,7 +8,7 @@ import java.io.File;
 @Data
 @Accessors(fluent = true)
 public class WordCounterConfiguration {
-    private int defaultTarget;
+    private long defaultTarget;
     private File directory;
     private String pattern;
 
