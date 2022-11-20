@@ -8,4 +8,5 @@ import lombok.experimental.Accessors;
 public class Outcome<C> {
     private boolean success;
     private C value;
+    private String message;
 }
