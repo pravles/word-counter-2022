@@ -2,7 +2,6 @@ package com.pravles.wordcounter;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.slf4j.Logger;
@@ -38,7 +37,12 @@ public class Controller {
         // Command to count words (except lines starting with #)
         // cat draft.org | sed '/^#/d' | wc -w
         final String command = String.format("cat %s | sed '/^#/d' | wc -w", file.getAbsolutePath());
-        final CommandLine cmdLine = CommandLine.parse(command);
+        final CommandLine cmdLine = new CommandLine("/bin/sh");
+        cmdLine.addArguments(new String[]{
+                "-c",
+                command
+        }, false);
+//        final CommandLine cmdLine = CommandLine.parse(command);
         final DefaultExecutor executor = new DefaultExecutor();
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
