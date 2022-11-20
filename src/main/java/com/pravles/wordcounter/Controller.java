@@ -4,6 +4,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayOutputStream;
@@ -29,26 +30,22 @@ public class Controller {
                 logger.error(String.format("An error occurred while trying to count words in file '%s'", files[i].getAbsolutePath()), exception);
             }
         }
-
-
+        logger.info(String.format("Initial word count: %d", wordCount));
     }
 
     private int calculateWordCount(final File file) throws IOException {
-        // Command to count words (except lines starting with #)
-        // cat draft.org | sed '/^#/d' | wc -w
         final String command = String.format("cat %s | sed '/^#/d' | wc -w", file.getAbsolutePath());
         final CommandLine cmdLine = new CommandLine("/bin/sh");
         cmdLine.addArguments(new String[]{
                 "-c",
                 command
         }, false);
-//        final CommandLine cmdLine = CommandLine.parse(command);
         final DefaultExecutor executor = new DefaultExecutor();
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         final PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
         executor.setStreamHandler(streamHandler);
         executor.execute(cmdLine);
-        final String x = outputStream.toString();
-        return 0;
+        final String resultTxt = outputStream.toString();
+        return Integer.parseInt(StringUtils.trim(resultTxt));
     }
 }
