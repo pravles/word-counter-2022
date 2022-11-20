@@ -19,6 +19,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
@@ -34,6 +35,8 @@ public class Controller {
     private WatchService watcher;
     private Map<WatchKey, Path> keys;
     private WildcardFileFilter fileFilter;
+    private ConcurrentHashMap<String, Integer> wordCountByFilename;
+    private MainWindow window;
 
     public Controller() {
         this(Runtime.getRuntime());
@@ -44,6 +47,8 @@ public class Controller {
     }
 
     void start(final WordCounterConfiguration config, MainWindow window) throws IOException {
+        this.window = window;
+
         final File dir = config.directory();
         final int initialWordCount = countWords(config, dir);
 
@@ -56,21 +61,20 @@ public class Controller {
         logger.info("Done");
 
         final Thread processEventsThread =
-                new Thread(() -> processEvents());
+                new Thread(this::processEvents);
         final Thread stopProcessEventsThread =
-                new Thread(() -> processEventsThread.interrupt());
+                new Thread(processEventsThread::interrupt);
 
         runtime.addShutdownHook(stopProcessEventsThread);
 
-        window.setInitialWordCount(initialWordCount);
-        window.setDailyTarget(config.defaultTarget());
+        this.window.setInitialWordCount(initialWordCount);
+        this.window.setDailyTarget(config.defaultTarget());
 
-        window.centerOnScreen();
-        window.pack();
-        window.setVisible(true);
+        this.window.centerOnScreen();
+        this.window.pack();
+        this.window.setVisible(true);
 
         processEventsThread.start();
-
     }
 
     private void startObservingDirectory(final File directory) throws IOException {
@@ -129,10 +133,21 @@ public class Controller {
 
     private void processEvent(final WatchEvent<?> event, final Path child) {
         // TODO: Check whether or not we need to look at the file at all
-        final String fileName = child.getFileName().toString();
-
-        if (!fileFilter.accept(child.getFileName().toFile())) {
+        final File file = child.getFileName().toFile();
+        final String path = file.getAbsolutePath();
+        if (!fileFilter.accept(file)) {
             return;
+        }
+
+        if ("ENTRY_DELETE".equals(event.kind().name())) {
+            if (wordCountByFilename.contains(path)) {
+                wordCountByFilename.remove(path);
+
+                final int currentWordCount = countWords();
+                this.window.setCurrentWordCount(currentWordCount);
+
+            }
+
         }
 
         // ENTRY_DELETE
@@ -147,17 +162,26 @@ public class Controller {
     private int countWords(WordCounterConfiguration config, File dir) {
         final File[] files = dir.listFiles((FileFilter) new WildcardFileFilter(config.pattern()));
 
+        wordCountByFilename = new ConcurrentHashMap<>(files.length);
+
         // Calculate word count at start
         int wordCount = 0;
 
-        for (int i=0; i < files.length; i++) {
+        for (File file : files) {
             try {
-                wordCount += calculateWordCount(files[i]);
+                final int currentWordcount =  calculateWordCount(file);
+                wordCount += currentWordcount;
+                wordCountByFilename.put(file.getAbsolutePath(), currentWordcount);
             } catch (final IOException exception) {
-                logger.error(format("An error occurred while trying to count words in file '%s'", files[i].getAbsolutePath()), exception);
+                logger.error(format("An error occurred while trying to count words in file '%s'", file.getAbsolutePath()), exception);
             }
         }
         return wordCount;
+    }
+
+    private int countWords() {
+        return this.wordCountByFilename
+                .values().stream().mapToInt(Integer::intValue).sum();
     }
 
     private int calculateWordCount(final File file) throws IOException {
