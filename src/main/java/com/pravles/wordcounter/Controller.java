@@ -46,6 +46,7 @@ public class Controller {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<>();
         register(directory);
+        processEvents();
 
     }
 
@@ -67,24 +68,24 @@ public class Controller {
                 return;
             }
 
-            Path dir = keys.get(key);
+            final Path dir = keys.get(key);
             if (dir == null) {
                 logger.error("Watch key not recognized");
                 continue;
             }
 
             for (final WatchEvent<?> event : key.pollEvents()) {
-                WatchEvent.Kind kind = event.kind();
+                final WatchEvent.Kind kind = event.kind();
                 if (kind == OVERFLOW) {
                     continue;
                 }
-                WatchEvent<Path> ev = cast(event);
-                Path name = ev.context();
-                Path child = dir.resolve(name);
+                final WatchEvent<Path> ev = cast(event);
+                final Path name = ev.context();
+                final Path child = dir.resolve(name);
 
-                logger.info(String.format("%s: %s", event.kind().name(), child));
+                processEvent(event, child);
             }
-            boolean valid = key.reset();
+            final boolean valid = key.reset();
             if (!valid) {
                 keys.remove(key);
 
@@ -93,6 +94,10 @@ public class Controller {
                 }
             }
         }
+    }
+
+    private void processEvent(final WatchEvent<?> event, final Path child) {
+        logger.info(String.format("%s: %s", event.kind().name(), child));
     }
 
     private int countWords(WordCounterConfiguration config, File dir) {
