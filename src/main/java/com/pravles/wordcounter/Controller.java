@@ -30,15 +30,47 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class Controller {
     private final static Logger logger = getLogger(Controller.class);
 
+    private final Runtime runtime;
     private WatchService watcher;
     private Map<WatchKey, Path> keys;
+
+    public Controller() {
+        this(Runtime.getRuntime());
+    }
+
+    Controller(final Runtime runtime) {
+        this.runtime = runtime;
+    }
 
     void start(final WordCounterConfiguration config) throws IOException {
         final File dir = config.directory();
         final int wordCount = countWords(config, dir);
         logger.info(format("Initial word count: %d", wordCount));
 
+        logger.info("Setting up observation of the directory with text...");
         startObservingDirectory(config.directory());
+        logger.info("Done");
+        // TODO: Put the thing into a separate thread
+
+        // TODO: Make sure that this thread is stopped when the application stops
+        // Runtime.getRuntime().addShutdownHook(printingHook);
+        // https://www.baeldung.com/jvm-shutdown-hooks
+
+        final Thread processEventsThread = new Thread() {
+            @Override
+            public void run() {
+                processEvents();
+            }
+        };
+
+        final Thread stopProcessEventsThread = new Thread() {
+            @Override
+            public void run() {
+                processEventsThread.interrupt();
+            }
+        };
+        runtime.addShutdownHook(stopProcessEventsThread);
+
     }
 
     private void startObservingDirectory(final File directory) throws IOException {
@@ -46,7 +78,6 @@ public class Controller {
         this.watcher = FileSystems.getDefault().newWatchService();
         this.keys = new HashMap<>();
         register(directory);
-        processEvents();
 
     }
 
