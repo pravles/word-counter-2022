@@ -39,17 +39,15 @@ public class App {
             System.exit(2);
         }
 
+
+        final MainWindow window = new MainWindow();
         final Controller controller = new Controller();
         try {
-            controller.start(configParsingOutcome.value());
+            controller.start(configParsingOutcome.value(), window);
         } catch (final IOException exception) {
             logger.error("Could not start the controller", exception);
             System.exit(3);
         }
-
-        final MainWindow window = new MainWindow();
-        window.setVisible(true);
-        window.setLocation(calculateCenterOnScreen(window));
     }
 
     Outcome<File> extractConfigFile(final String[] args) {

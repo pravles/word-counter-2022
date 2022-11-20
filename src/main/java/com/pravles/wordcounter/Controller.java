@@ -33,6 +33,7 @@ public class Controller {
     private final Runtime runtime;
     private WatchService watcher;
     private Map<WatchKey, Path> keys;
+    private WildcardFileFilter fileFilter;
 
     public Controller() {
         this(Runtime.getRuntime());
@@ -42,34 +43,32 @@ public class Controller {
         this.runtime = runtime;
     }
 
-    void start(final WordCounterConfiguration config) throws IOException {
+    void start(final WordCounterConfiguration config, MainWindow window) throws IOException {
         final File dir = config.directory();
-        final int wordCount = countWords(config, dir);
-        logger.info(format("Initial word count: %d", wordCount));
+        final int initialWordCount = countWords(config, dir);
+
+        fileFilter = new WildcardFileFilter(config.pattern());
+
+        logger.info(format("Initial word count: %d", initialWordCount));
 
         logger.info("Setting up observation of the directory with text...");
         startObservingDirectory(config.directory());
         logger.info("Done");
-        // TODO: Put the thing into a separate thread
 
-        // TODO: Make sure that this thread is stopped when the application stops
-        // Runtime.getRuntime().addShutdownHook(printingHook);
-        // https://www.baeldung.com/jvm-shutdown-hooks
+        final Thread processEventsThread =
+                new Thread(() -> processEvents());
+        final Thread stopProcessEventsThread =
+                new Thread(() -> processEventsThread.interrupt());
 
-        final Thread processEventsThread = new Thread() {
-            @Override
-            public void run() {
-                processEvents();
-            }
-        };
-
-        final Thread stopProcessEventsThread = new Thread() {
-            @Override
-            public void run() {
-                processEventsThread.interrupt();
-            }
-        };
         runtime.addShutdownHook(stopProcessEventsThread);
+
+        window.setInitialWordCount(initialWordCount);
+
+        window.centerOnScreen();
+        window.pack();
+        window.setVisible(true);
+
+        processEventsThread.start();
 
     }
 
@@ -128,8 +127,21 @@ public class Controller {
     }
 
     private void processEvent(final WatchEvent<?> event, final Path child) {
+        // TODO: Check whether or not we need to look at the file at all
+        final String fileName = child.getFileName().toString();
+
+        if (!fileFilter.accept(child.getFileName().toFile())) {
+            return;
+        }
+
+        // ENTRY_DELETE
+        // ENTRY_CREATE
+        // ENTRY_MODIFY
+
         logger.info(String.format("%s: %s", event.kind().name(), child));
+
     }
+
 
     private int countWords(WordCounterConfiguration config, File dir) {
         final File[] files = dir.listFiles((FileFilter) new WildcardFileFilter(config.pattern()));
