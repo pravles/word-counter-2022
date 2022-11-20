@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 import static com.pravles.wordcounter.Utils.calculateCenterOnScreen;
 import static java.lang.String.format;
@@ -39,7 +40,12 @@ public class App {
         }
 
         final Controller controller = new Controller();
-        controller.start(configParsingOutcome.value());
+        try {
+            controller.start(configParsingOutcome.value());
+        } catch (final IOException exception) {
+            logger.error("Could not start the controller", exception);
+            System.exit(3);
+        }
 
         final MainWindow window = new MainWindow();
         window.setVisible(true);
