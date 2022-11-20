@@ -63,6 +63,7 @@ public class Controller {
         runtime.addShutdownHook(stopProcessEventsThread);
 
         window.setInitialWordCount(initialWordCount);
+        window.setDailyTarget(config.defaultTarget());
 
         window.centerOnScreen();
         window.pack();
