@@ -88,7 +88,6 @@ public class ConfigFileParser {
                 .value(new WordCounterConfiguration()
                         .defaultTarget(defaultTarget)
                         .directory(directory)
-                        .pattern(pattern))
-                .message("Not implemented");
+                        .pattern(pattern));
     }
 }

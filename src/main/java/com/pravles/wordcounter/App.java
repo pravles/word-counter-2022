@@ -38,6 +38,9 @@ public class App {
             System.exit(2);
         }
 
+        final Controller controller = new Controller();
+        controller.start(configParsingOutcome.value());
+
         final MainWindow window = new MainWindow();
         window.setVisible(true);
         window.setLocation(calculateCenterOnScreen(window));
