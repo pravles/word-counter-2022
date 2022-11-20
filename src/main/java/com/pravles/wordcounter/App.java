@@ -11,18 +11,36 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class App {
     private final static Logger logger = LoggerFactory.getLogger(App.class);
+    private final ConfigFileParser configFileParser;
+
+    App(final ConfigFileParser configFileParser) {
+        this.configFileParser = configFileParser;
+    }
+
+    public App() {
+        this(new ConfigFileParser());
+    }
+
 
     void run(final String[] args) {
         final Outcome<File> argsParsingResult = extractConfigFile(args);
-        if (argsParsingResult.success()) {
-            final MainWindow window = new MainWindow();
-            window.setVisible(true);
-            window.setLocation(calculateCenterOnScreen(window));
-        } else {
+        if (!argsParsingResult.success()) {
             logger.error(format("No configuration file specified or "+
                             "configuration is invalid ('%s')",
                     defaultString(argsParsingResult.message(), "")));
+            System.exit(1);
         }
+        final Outcome<WordCounterConfiguration> configParsingOutcome = configFileParser.parseConfigFile(argsParsingResult.value());
+
+        if (!configParsingOutcome.success()) {
+            logger.error(format("Error parsing configuration file ('%s')",
+                   configParsingOutcome.message()));
+            System.exit(2);
+        }
+
+        final MainWindow window = new MainWindow();
+        window.setVisible(true);
+        window.setLocation(calculateCenterOnScreen(window));
     }
 
     Outcome<File> extractConfigFile(final String[] args) {
