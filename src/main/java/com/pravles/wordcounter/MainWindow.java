@@ -10,6 +10,7 @@ import static com.pravles.wordcounter.Utils.calculateCenterOnScreen;
 public class MainWindow extends JFrame {
 
     private final JLabel initialWordCount;
+    private final JLabel currentWordCount;
 
     public MainWindow() {
         super("Word Counter 2022");
@@ -19,10 +20,14 @@ public class MainWindow extends JFrame {
 
         final JPanel detailsPane = new JPanel(false);
 
-        final JLabel label = new JLabel("Initial word count:");
         initialWordCount = new JLabel("?");
-        detailsPane.add(label);
+        detailsPane.add(new JLabel("Initial word count:"));
         detailsPane.add(initialWordCount);
+
+        currentWordCount = new JLabel("?");
+
+        detailsPane.add(new JLabel("Current word count:"));
+        detailsPane.add(currentWordCount);
 
         tabbedPane.add("Details", detailsPane);
 
@@ -37,5 +42,6 @@ public class MainWindow extends JFrame {
 
     public void setInitialWordCount(int initialWordCount) {
         this.initialWordCount.setText(Integer.toString(initialWordCount));
+        this.currentWordCount.setText(Integer.toString(initialWordCount));
     }
 }
