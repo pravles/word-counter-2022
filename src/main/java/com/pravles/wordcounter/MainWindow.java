@@ -75,6 +75,7 @@ public class MainWindow extends JFrame {
         detailsPane.add(wordsWrittenToday);
 
         dailyTarget = new JTextField("?");
+        dailyTarget.setEditable(false);
 
         detailsPane.add(new JLabel("Daily target:"));
         detailsPane.add(dailyTarget);
