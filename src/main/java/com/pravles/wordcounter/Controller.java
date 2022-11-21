@@ -147,7 +147,7 @@ public class Controller {
                 final int currentWordCount = countWords();
                 this.window.setCurrentWordCount(currentWordCount);
             }
-        } else if ("ENTRY_CREATE".equals(eventName)) {
+        } else if ("ENTRY_CREATE".equals(eventName) || "ENTRY_MODIFY".equals(eventName)) {
             final int newFileWordCount;
             try {
                 newFileWordCount = calculateWordCount(file);
@@ -161,7 +161,6 @@ public class Controller {
             }
         }
 
-        // ENTRY_CREATE
         // ENTRY_MODIFY
 
         logger.info(String.format("%s: %s", eventName, child));
