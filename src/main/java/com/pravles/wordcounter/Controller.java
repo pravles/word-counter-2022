@@ -140,7 +140,7 @@ public class Controller {
         }
 
         if ("ENTRY_DELETE".equals(event.kind().name())) {
-            if (wordCountByFilename.contains(path)) {
+            if (wordCountByFilename.containsKey(path)) {
                 wordCountByFilename.remove(path);
 
                 final int currentWordCount = countWords();
