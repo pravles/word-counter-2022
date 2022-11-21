@@ -139,22 +139,32 @@ public class Controller {
             return;
         }
 
-        if ("ENTRY_DELETE".equals(event.kind().name())) {
+        final String eventName = event.kind().name();
+        if ("ENTRY_DELETE".equals(eventName)) {
             if (wordCountByFilename.containsKey(path)) {
                 wordCountByFilename.remove(path);
 
                 final int currentWordCount = countWords();
                 this.window.setCurrentWordCount(currentWordCount);
-
             }
+        } else if ("ENTRY_CREATE".equals(eventName)) {
+            final int newFileWordCount;
+            try {
+                newFileWordCount = calculateWordCount(file);
 
+                wordCountByFilename.put(path, newFileWordCount);
+
+                final int currentWordCount = countWords();
+                this.window.setCurrentWordCount(currentWordCount);
+            } catch (final IOException exception) {
+                logger.error(String.format("An error occurred while counting words in file '%s'", file.getAbsolutePath()), exception);
+            }
         }
 
-        // ENTRY_DELETE
         // ENTRY_CREATE
         // ENTRY_MODIFY
 
-        logger.info(String.format("%s: %s", event.kind().name(), child));
+        logger.info(String.format("%s: %s", eventName, child));
 
     }
 
