@@ -1,10 +1,5 @@
 package com.pravles.wordcounter;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
-
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,6 +21,7 @@ public class MainWindow extends JFrame {
     private JTextField dailyTarget;
     private JLabel progress;
     private JLabel overviewProgress;
+    private JProgressBar progressBar;
 
     public MainWindow() {
         super("Word Counter 2022");
@@ -45,7 +41,7 @@ public class MainWindow extends JFrame {
         final JPanel chartPane = new JPanel(false);
         chartPane.setLayout(new BoxLayout(chartPane, BoxLayout.PAGE_AXIS));
 
-        final JProgressBar progressBar = new JProgressBar();
+        progressBar = new JProgressBar();
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
         progressBar.setMaximum(100);
@@ -114,5 +110,6 @@ public class MainWindow extends JFrame {
         this.progress.setText(String.format("%d %%", progress));
 
         this.overviewProgress.setText(String.format("%d %% (%d out of %d)", progress, wordsWritten, dailyTargetAmount));
+        this.progressBar.setValue(progress);
     }
 }
