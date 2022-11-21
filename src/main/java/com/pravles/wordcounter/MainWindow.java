@@ -14,11 +14,11 @@ import static java.lang.Integer.parseInt;
 
 public class MainWindow extends JFrame {
 
-    private final JLabel initialWordCount;
-    private final JLabel currentWordCount;
-    private final JLabel wordsWrittenToday;
-    private final JTextField dailyTarget;
-    private final JLabel progress;
+    private JLabel initialWordCount;
+    private JLabel currentWordCount;
+    private JLabel wordsWrittenToday;
+    private JTextField dailyTarget;
+    private JLabel progress;
     private JLabel overviewProgress;
 
     public MainWindow() {
@@ -28,7 +28,24 @@ public class MainWindow extends JFrame {
         final JTabbedPane tabbedPane = new JTabbedPane();
 
         tabbedPane.add("Overview", createChartPane());
+        tabbedPane.add("Details", createDetailsPane());
 
+        getContentPane().add(tabbedPane);
+
+        pack();
+    }
+
+    private JPanel createChartPane() {
+        final JPanel chartPane = new JPanel(false);
+        chartPane.setLayout(new BoxLayout(chartPane, BoxLayout.PAGE_AXIS));
+
+        overviewProgress = new JLabel("?");
+        chartPane.add(overviewProgress);
+        return chartPane;
+
+    }
+
+    private JPanel createDetailsPane() {
         final JPanel detailsPane = new JPanel(false);
 
         final GridLayout gridLayout = new GridLayout(5, 2);
@@ -57,22 +74,7 @@ public class MainWindow extends JFrame {
         detailsPane.add(new JLabel("Progress:"));
         detailsPane.add(progress);
 
-
-        tabbedPane.add("Details", detailsPane);
-
-        getContentPane().add(tabbedPane);
-
-        pack();
-    }
-
-    private JPanel createChartPane() {
-        final JPanel chartPane = new JPanel(false);
-        chartPane.setLayout(new BoxLayout(chartPane, BoxLayout.PAGE_AXIS));
-
-        overviewProgress = new JLabel("?");
-        chartPane.add(overviewProgress);
-        return chartPane;
-
+        return detailsPane;
     }
 
     void centerOnScreen() {
