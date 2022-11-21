@@ -78,7 +78,7 @@ public class MainWindow extends JFrame {
     public void setCurrentWordCount(final int wordCount) {
         this.currentWordCount.setText(Integer.toString(wordCount));
         final int initialWordCount = parseInt(this.initialWordCount.getText());
-        final int wordsWritten = Math.min(0, wordCount - initialWordCount);
+        final int wordsWritten = Math.max(0, wordCount - initialWordCount);
         this.wordsWrittenToday.setText(Integer.toString(wordsWritten));
         final int dailyTargetAmount = parseInt(this.dailyTarget.getText());
         final int progress = wordsWritten*100 / dailyTargetAmount;
