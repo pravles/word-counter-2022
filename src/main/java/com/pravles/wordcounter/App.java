@@ -41,19 +41,7 @@ public class App {
             System.exit(2);
         }
 
-
-        try {
-            UIManager.setLookAndFeel(
-                    UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+        setLookAndFeel();
 
         final MainWindow window = new MainWindow();
         final Controller controller = new Controller();
@@ -62,6 +50,15 @@ public class App {
         } catch (final IOException exception) {
             logger.error("Could not start the controller", exception);
             System.exit(3);
+        }
+    }
+
+    private void setLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(
+                    UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException exception) {
+            logger.warn("Error while configuring the look and feel. With a wrong look and feel the progress bar may not be visible if the window is out of focus.", exception);
         }
     }
 
