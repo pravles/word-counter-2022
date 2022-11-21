@@ -1,9 +1,15 @@
 package com.pravles.wordcounter;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
@@ -38,6 +44,13 @@ public class MainWindow extends JFrame {
     private JPanel createChartPane() {
         final JPanel chartPane = new JPanel(false);
         chartPane.setLayout(new BoxLayout(chartPane, BoxLayout.PAGE_AXIS));
+
+        final JProgressBar progressBar = new JProgressBar();
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+        progressBar.setMaximum(100);
+
+        chartPane.add(progressBar);
 
         overviewProgress = new JLabel("?");
         chartPane.add(overviewProgress);
