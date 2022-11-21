@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import static com.pravles.wordcounter.Utils.calculateCenterOnScreen;
@@ -20,7 +19,7 @@ public class MainWindow extends JFrame {
     private final JLabel wordsWrittenToday;
     private final JTextField dailyTarget;
     private final JLabel progress;
-    private final JLabel overviewProgress;
+    private JLabel overviewProgress;
 
     public MainWindow() {
         super("Word Counter 2022");
@@ -28,13 +27,7 @@ public class MainWindow extends JFrame {
 
         final JTabbedPane tabbedPane = new JTabbedPane();
 
-        final JPanel chartPane = new JPanel(false);
-        chartPane.setLayout(new BoxLayout(chartPane, BoxLayout.PAGE_AXIS));
-
-        overviewProgress = new JLabel("?");
-        chartPane.add(overviewProgress);
-
-        tabbedPane.add("Overview", chartPane);
+        tabbedPane.add("Overview", createChartPane());
 
         final JPanel detailsPane = new JPanel(false);
 
@@ -70,6 +63,16 @@ public class MainWindow extends JFrame {
         getContentPane().add(tabbedPane);
 
         pack();
+    }
+
+    private JPanel createChartPane() {
+        final JPanel chartPane = new JPanel(false);
+        chartPane.setLayout(new BoxLayout(chartPane, BoxLayout.PAGE_AXIS));
+
+        overviewProgress = new JLabel("?");
+        chartPane.add(overviewProgress);
+        return chartPane;
+
     }
 
     void centerOnScreen() {
