@@ -49,9 +49,9 @@ public class MainWindow extends JFrame {
         detailsPane.add(new JLabel("Current word count:"));
         detailsPane.add(currentWordCount);
 
-        wordsWrittenToday = new JLabel("?");
+        wordsWrittenToday = new JLabel("0%");
 
-        detailsPane.add(new JLabel("Words written today:"));
+        detailsPane.add(new JLabel("Words written in current session:"));
         detailsPane.add(wordsWrittenToday);
 
         dailyTarget = new JTextField("?");
@@ -94,5 +94,7 @@ public class MainWindow extends JFrame {
         final int dailyTargetAmount = parseInt(this.dailyTarget.getText());
         final int progress = wordsWritten*100 / dailyTargetAmount;
         this.progress.setText(String.format("%d %%", progress));
+
+        this.overviewProgress.setText(String.format("%d %% (%d out of %d)", progress, wordsWritten, dailyTargetAmount));
     }
 }
