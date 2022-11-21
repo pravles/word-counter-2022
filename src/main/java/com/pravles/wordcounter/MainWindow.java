@@ -26,6 +26,7 @@ public class MainWindow extends JFrame {
     public MainWindow() {
         super("Word Counter 2022");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
 
         final JTabbedPane tabbedPane = new JTabbedPane();
 
