@@ -1,0 +1,7 @@
+{
+ :where-to-count-words-in {
+  :directory  "/Users/dp118m/dev/focus/legacy/white-niggers/src/txt/"
+  :pattern "ch*.org"
+  }
+ :default-target 500
+}

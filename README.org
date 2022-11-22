@@ -1,0 +1,7 @@
+#+TITLE: Word Counter 2022
+
+* How to build
+
+#+begin_example
+mvn clean compile assembly:single
+#+end_example
