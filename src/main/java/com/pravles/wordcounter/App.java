@@ -8,7 +8,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import java.io.File;
 import java.io.IOException;
 
-import static com.pravles.wordcounter.Utils.calculateCenterOnScreen;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
