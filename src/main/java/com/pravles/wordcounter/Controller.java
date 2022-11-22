@@ -132,7 +132,6 @@ public class Controller {
     }
 
     private void processEvent(final WatchEvent<?> event, final Path child) {
-        // TODO: Check whether or not we need to look at the file at all
         final File file = child.toFile();
         final String path = file.getAbsolutePath();
         if (!fileFilter.accept(file)) {
